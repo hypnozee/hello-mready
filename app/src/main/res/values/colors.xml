@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#168DCA</color>
+    <color name="colorPrimaryDark">#157cb1</color>
+    <color name="colorAccent">#2e7d32</color>
+    <color name="windowBackground">#F9F9F8</color>
+
+    <color name="repo_list_divider">#e4e0db</color>
+
+    <!--text colors-->
+    <color name="textColorPrimary">#1D1D1B</color>
+    <color name="textColorSecondary">#c61d1d1b</color>
+    <color name="textColorLight">#ffffff</color>
+
+    <!--fake buttons-->
+    <color name="btn_color_1">#FF9C00</color>
+    <color name="btn_color_2">#0F4A68</color>
+
 </resources>
