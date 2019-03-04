@@ -22,6 +22,7 @@ import com.razvanb.hellomready.ui.githubrepodetatils.GitHubRepoDetailsActivity
 import com.razvanb.hellomready.utils.Constants.REPO_GRID_LAYOUT
 import com.razvanb.hellomready.utils.Constants.REPO_LIST_LAYOUT
 import kotlinx.android.synthetic.main.activity_repo_list.*
+import java.util.ArrayList
 
 import javax.inject.Inject
 
@@ -39,6 +40,11 @@ class GitHubReposActivity : BaseActivity(),
     private var mListAdapter: ReposListAdapter? = null
     private lateinit var mItemDecor: DividerItemDecoration
     private var mLayout: Int = 0
+
+    companion object {
+        const val REPOS_CACHE = "repos_cache"
+        const val LAYOUT_CACHE = "layout_cache"
+    }
 
     override fun injectDependencies() {
         ApplicationState
@@ -61,9 +67,26 @@ class GitHubReposActivity : BaseActivity(),
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setTitle(R.string.title_activity_repos_list)
+    }
 
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        if (savedInstanceState != null && savedInstanceState.containsKey(REPOS_CACHE)) {
+            mRepoItems = savedInstanceState.getParcelableArrayList(REPOS_CACHE)
+            mLayout = savedInstanceState.getInt(LAYOUT_CACHE)
+            setupList()
+        } else {
+            presenter.getReposFromApi()
+            presenter.loadLayout()
+        }
+    }
 
-        presenter.getReposFromApi()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (mRepoItems != null && mRepoItems is ArrayList) {
+            outState.putInt(LAYOUT_CACHE, mLayout)
+            outState.putParcelableArrayList(REPOS_CACHE, mRepoItems as ArrayList<ItemsItem>)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -78,6 +101,19 @@ class GitHubReposActivity : BaseActivity(),
     }
 
     override fun onLoadLayout(layout: Int) {
+        mLayout = layout
+        when(layout) {
+            REPO_LIST_LAYOUT -> {
+                repo_list_rw.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+                mItemDecor = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+                repo_list_rw.addItemDecoration(mItemDecor)
+            }
+            REPO_GRID_LAYOUT -> {
+                repo_list_rw.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                mItemDecor = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+                repo_list_rw.removeItemDecoration(mItemDecor)
+            }
+        }
     }
 
     override fun onLayoutChanged(layout: Int) {
@@ -92,10 +128,8 @@ class GitHubReposActivity : BaseActivity(),
 
     private fun setupList() {
         mListAdapter = ReposListAdapter(this.mRepoItems, this)
-
         mItemDecor = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         mItemDecor.setDrawable(resources.getDrawable(R.drawable.list_item_divider))
-
         setupListLayout()
     }
 

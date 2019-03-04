@@ -14,7 +14,6 @@ import javax.inject.Inject
 class GitHubReposPresenter(coroutinesManager: CoroutinesManager, dataManager: DataManager) :
     BasePresenterImpl<GitHubReposView>(coroutinesManager, dataManager) {
 
-
     @Inject
     internal lateinit var roomRepository: RoomRepository
 
@@ -40,6 +39,15 @@ class GitHubReposPresenter(coroutinesManager: CoroutinesManager, dataManager: Da
 
     private suspend fun onSuccessRepos(repositoriesResponse: RepositoriesResponse?) {
         view().onLoadRepos(repositoriesResponse)
+    }
+
+    fun loadLayout() {
+        if (isAttached()) {
+            val layout = getReposListLayout()
+            launchOnUI {
+                view().onLoadLayout(layout)
+            }
+        }
     }
 
     fun changeLayout(layout: Int) {

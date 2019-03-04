@@ -80,7 +80,6 @@ constructor(coroutinesManager: CoroutinesManager, dataManager: DataManager) : Vi
 
     @Synchronized
     override fun attachView(view: V, viewLifecycle: Lifecycle) {
-
         viewInstance = view
         this.viewLifecycle = viewLifecycle
 
@@ -89,6 +88,10 @@ constructor(coroutinesManager: CoroutinesManager, dataManager: DataManager) : Vi
 
     protected open fun onViewAttached(view: V) {
         // Nothing to do here. This is an event handled by the subclasses.
+    }
+
+    override fun isAttached(): Boolean {
+        return viewInstance != null
     }
 
     @Synchronized
